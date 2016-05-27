@@ -159,19 +159,18 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 		Set<K> set = new LinkedHashSet<K>();
         // TODO: Fill this in.
 
-        Stack<Node> stack = new Stack<Node>();
-        Node current;
-		stack.push(root);
-		while(!stack.isEmpty())
-		{
-			current = stack.pop();
-			set.add(current.key);
-			if(current.right != null)
-				stack.push(current.right);
-			if(current.left != null)
-			stack.push(current.left);
-		}
+        addToSet(root, set);
 		return set;
+	}
+
+	private void addToSet(Node node, Set<K> set)
+	{
+		//Recursive base case
+		if(node == null)
+			return;
+		addToSet(node.left, set);
+		set.add(node.key);
+		addToSet(node.right, set);
 	}
 
 	@Override
