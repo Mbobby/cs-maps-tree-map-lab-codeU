@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * Implementation of a Map using a binary search tree.
@@ -71,6 +72,24 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 		@SuppressWarnings("unchecked")
 		Comparable<? super K> k = (Comparable<? super K>) target;
 		
+		Node tmp = root;
+		int comp;
+		while(tmp != null)
+		{
+			comp = k.compareTo(tmp.key);
+			if(comp == 0)
+			{
+				return tmp;
+			}
+			else if(comp < 0)
+			{
+				tmp = tmp.left;
+			}
+			else
+			{
+				tmp = tmp.right;
+			}
+		}
 		// the actual search
         // TODO: Fill this in.
         return null;
@@ -92,6 +111,27 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 
 	@Override
 	public boolean containsValue(Object target) {
+		if(target == null)
+			return false;
+
+
+		//Using DFS to traverse the tree
+		Stack<Node> stack = new Stack<Node>();
+
+		stack.push(root);
+		Node current;
+		while(!stack.isEmpty())
+		{
+			current = stack.pop();
+			if(equals(current.value, target))
+			{
+				return true;
+			}
+			if(current.right != null)
+				stack.push(current.right);
+			if(current.left != null)
+			stack.push(current.left);
+		}
 		return false;
 	}
 
@@ -118,6 +158,19 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 	public Set<K> keySet() {
 		Set<K> set = new LinkedHashSet<K>();
         // TODO: Fill this in.
+
+        Stack<Node> stack = new Stack<Node>();
+        Node current;
+		stack.push(root);
+		while(!stack.isEmpty())
+		{
+			current = stack.pop();
+			set.add(current.key);
+			if(current.right != null)
+				stack.push(current.right);
+			if(current.left != null)
+			stack.push(current.left);
+		}
 		return set;
 	}
 
@@ -135,6 +188,41 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 	}
 
 	private V putHelper(Node node, K key, V value) {
+		@SuppressWarnings("unchecked")
+		Comparable<? super K> k = (Comparable<? super K>) key;
+		int comp;
+		while(node != null)
+		{
+			comp = k.compareTo(node.key);
+			if(comp == 0)
+			{
+				V ret = node.value;
+				node.value = value;
+				return ret;
+			}
+			else if(comp < 0)
+			{
+				if(node.left == null)
+				{
+					node.left = new Node(key, value);
+					size++;
+					return null;
+				}
+				node = node.left;
+
+			}
+			else
+			{
+				if(node.right == null)
+				{
+					node.right = new Node(key, value);
+					size++;
+					return null;
+				}
+				node = node.right;
+			}
+		}
+
         // TODO: Fill this in.
         return null;
 	}
